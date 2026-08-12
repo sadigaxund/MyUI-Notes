@@ -1,0 +1,21 @@
+{
+  "workbench.startupEditor": "none",
+  "workbench.colorTheme": "Monokai",
+  "security.workspace.trust.enabled": false,
+  "update.mode": "none",
+  "extensions.autoCheckUpdates": false,
+  "extensions.autoUpdate": false,
+  "telemetry.telemetryLevel": "off",
+  "window.menuBarVisibility": "compact",
+  "window.title": "${rootName}",
+  "editor.fontSize": 14,
+  "editor.tabSize": 2,
+  "editor.minimap.enabled": false,
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "search.exclude": {
+    "node_modules": true
+  }
+}
