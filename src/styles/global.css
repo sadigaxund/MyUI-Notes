@@ -1,2 +1,9 @@
 @import "tailwindcss";
 @source "../node_modules/my-you-eye/dist";
+
+/* Hide CodeBlock's chrome (file name, language badge, copy button) for a
+ * bare editor look. Published my-you-eye has no prop for this; remove once
+ * the library ships one (see sadigaxund/my-you-eye issue #N). */
+.codeview-clean > div:first-child {
+  display: none;
+}

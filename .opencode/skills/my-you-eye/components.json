@@ -1,0 +1,853 @@
+{
+  "package": "my-you-eye",
+  "generated": "auto — do not edit by hand; run `npm run manifest`",
+  "count": 54,
+  "components": [
+    {
+      "name": "Canvas",
+      "group": "canvas",
+      "folder": "ui/canvas",
+      "props": {},
+      "demos": [
+        "Empty grid"
+      ]
+    },
+    {
+      "name": "ConnectionLine",
+      "group": "canvas",
+      "folder": "ui/connection-line",
+      "props": {
+        "variant": [
+          "bezier",
+          "stepped",
+          "straight"
+        ],
+        "state": [
+          "connected",
+          "highlighted",
+          "pending"
+        ]
+      },
+      "demos": [
+        "Path variants",
+        "Edge states",
+        "Decorations (arrowheads + labels)",
+        "Label positions"
+      ]
+    },
+    {
+      "name": "Graph",
+      "group": "canvas",
+      "folder": "ui/patterns/graph",
+      "props": {
+        "type": [
+          "button"
+        ]
+      },
+      "demos": [
+        "Pipeline editor (drag nodes, connect ports, delete selected)"
+      ]
+    },
+    {
+      "name": "GraphNode",
+      "group": "canvas",
+      "folder": "ui/graph-node",
+      "props": {
+        "variant": [
+          "muted",
+          "selected",
+          "simple"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "Simple variant",
+        "Free-form body"
+      ]
+    },
+    {
+      "name": "Port",
+      "group": "canvas",
+      "folder": "ui/port",
+      "props": {
+        "state": [
+          "connected",
+          "default",
+          "highlighted"
+        ]
+      },
+      "demos": [
+        "States"
+      ]
+    },
+    {
+      "name": "CellType",
+      "group": "data",
+      "folder": "ui/cell-type",
+      "props": {
+        "type": [
+          "array",
+          "audio",
+          "badge",
+          "boolean",
+          "bytes",
+          "currency",
+          "date-human",
+          "date-system",
+          "datetime-tz",
+          "duration",
+          "email",
+          "image",
+          "json",
+          "null",
+          "number",
+          "percentage",
+          "signed",
+          "status",
+          "text",
+          "tree",
+          "url"
+        ]
+      },
+      "demos": [
+        "Data Types",
+        "Project X",
+        "Project X",
+        "Numeric types"
+      ]
+    },
+    {
+      "name": "DataList",
+      "group": "data",
+      "folder": "ui/data-list",
+      "props": {
+        "variant": [
+          "compact"
+        ]
+      },
+      "demos": [
+        "Default & Compact",
+        "Striped",
+        "Scrolling"
+      ]
+    },
+    {
+      "name": "DataTable",
+      "group": "data",
+      "folder": "ui/patterns/data-table",
+      "props": {
+        "variant": [
+          "striped"
+        ],
+        "density": [
+          "compact"
+        ]
+      },
+      "demos": [
+        "Default",
+        "Striped",
+        "Scrolling + sticky header",
+        "Truncation"
+      ]
+    },
+    {
+      "name": "Table",
+      "group": "data",
+      "folder": "ui/table",
+      "props": {},
+      "demos": []
+    },
+    {
+      "name": "TreeView",
+      "group": "data",
+      "folder": "ui/tree-view",
+      "props": {
+        "type": [
+          "button"
+        ],
+        "variant": [
+          "condensed"
+        ]
+      },
+      "demos": [
+        "Default vs Condensed",
+        "Depth-based expand",
+        "Controlled expand state",
+        "Leading icons (click a row, then use arrow keys)",
+        "Messy nested payload (hover to trace depth guides)"
+      ]
+    },
+    {
+      "name": "TexturedSurface",
+      "group": "decorators",
+      "folder": "ui/decorators/textured-surface",
+      "props": {
+        "variant": [
+          "elevated",
+          "ghost",
+          "primary",
+          "surface"
+        ],
+        "size": [
+          "sm"
+        ]
+      },
+      "demos": [
+        "Tuner",
+        "Paper grain",
+        "Frosted glass",
+        "Brushed aluminium",
+        "Paper grain — full matrix",
+        "Frosted glass — full matrix",
+        "Brushed aluminium — full matrix",
+        "Theme-driven",
+        "Nested inline → theme",
+        "Composed"
+      ]
+    },
+    {
+      "name": "Avatar",
+      "group": "display",
+      "folder": "ui/avatar",
+      "props": {
+        "size": [
+          "lg",
+          "md",
+          "sm"
+        ]
+      },
+      "demos": [
+        "Sizes",
+        "Fallback variants",
+        "With image",
+        "With ring",
+        "With status dot"
+      ]
+    },
+    {
+      "name": "Badge",
+      "group": "display",
+      "folder": "ui/badge",
+      "props": {
+        "variant": [
+          "danger",
+          "neutral",
+          "primary",
+          "success",
+          "warning"
+        ],
+        "style": [
+          "soft"
+        ]
+      },
+      "demos": [
+        "Variants (solid)",
+        "Variants (soft)"
+      ]
+    },
+    {
+      "name": "Card",
+      "group": "display",
+      "folder": "ui/card",
+      "props": {
+        "variant": [
+          "danger",
+          "default",
+          "elevated",
+          "ghost",
+          "outlined"
+        ],
+        "size": [
+          "sm"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "With footer actions"
+      ]
+    },
+    {
+      "name": "CodeBlock",
+      "group": "display",
+      "folder": "ui/code-block",
+      "props": {
+        "variant": [
+          "elevated"
+        ]
+      },
+      "demos": [
+        "Bare (no header, no language)",
+        "Language-only (badge overlay, no header bar)",
+        "With header + language",
+        "Elevated",
+        "Line numbers",
+        "No wrap (horizontal scroll)",
+        "Syntax highlighting (TS)",
+        "Line highlights",
+        "Line highlights (implicit gutter)",
+        "Multi-color highlights",
+        "Substring highlights",
+        "Merged highlights",
+        "Syntax highlighting (CSS / HTML / SQL / YAML / Python)"
+      ]
+    },
+    {
+      "name": "EmptyState",
+      "group": "display",
+      "folder": "ui/empty-state",
+      "props": {
+        "variant": [
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Default",
+        "With icon and action"
+      ]
+    },
+    {
+      "name": "Image",
+      "group": "display",
+      "folder": "ui/image",
+      "props": {},
+      "demos": [
+        "Fit modes",
+        "Border radius",
+        "Aspect ratio",
+        "Styles",
+        "With caption"
+      ]
+    },
+    {
+      "name": "Kbd",
+      "group": "display",
+      "folder": "ui/kbd",
+      "props": {},
+      "demos": [
+        "Default",
+        "Combinations"
+      ]
+    },
+    {
+      "name": "Markdown",
+      "group": "display",
+      "folder": "ui/markdown",
+      "props": {},
+      "demos": [
+        "Rendered markdown"
+      ]
+    },
+    {
+      "name": "ScrollArea",
+      "group": "display",
+      "folder": "ui/scroll-area",
+      "props": {},
+      "demos": [
+        "Vertical scroll",
+        "Horizontal scroll"
+      ]
+    },
+    {
+      "name": "Separator",
+      "group": "display",
+      "folder": "ui/separator",
+      "props": {
+        "orientation": [
+          "vertical"
+        ]
+      },
+      "demos": [
+        "Horizontal",
+        "Vertical"
+      ]
+    },
+    {
+      "name": "StatusDot",
+      "group": "display",
+      "folder": "ui/status-dot",
+      "props": {
+        "variant": [
+          "danger",
+          "info",
+          "neutral",
+          "success",
+          "warning"
+        ],
+        "size": [
+          "md",
+          "sm"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "Sizes",
+        "Pulsing"
+      ]
+    },
+    {
+      "name": "Alert",
+      "group": "feedback",
+      "folder": "ui/alert",
+      "props": {
+        "variant": [
+          "danger",
+          "info",
+          "success",
+          "warning"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "With title",
+        "With icon"
+      ]
+    },
+    {
+      "name": "Progress",
+      "group": "feedback",
+      "folder": "ui/progress",
+      "props": {
+        "variant": [
+          "danger",
+          "default",
+          "success",
+          "warning"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "No label"
+      ]
+    },
+    {
+      "name": "Skeleton",
+      "group": "feedback",
+      "folder": "ui/skeleton",
+      "props": {
+        "shape": [
+          "circle",
+          "rect",
+          "text"
+        ]
+      },
+      "demos": [
+        "Shapes"
+      ]
+    },
+    {
+      "name": "Spinner",
+      "group": "feedback",
+      "folder": "ui/spinner",
+      "props": {
+        "size": [
+          "lg",
+          "md",
+          "sm"
+        ]
+      },
+      "demos": [
+        "Sizes"
+      ]
+    },
+    {
+      "name": "Toast",
+      "group": "feedback",
+      "folder": "ui/toast",
+      "props": {
+        "variant": [
+          "danger",
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Trigger toasts"
+      ]
+    },
+    {
+      "name": "Button",
+      "group": "inputs",
+      "folder": "ui/button",
+      "props": {
+        "variant": [
+          "danger",
+          "ghost",
+          "primary",
+          "secondary"
+        ],
+        "size": [
+          "lg",
+          "md",
+          "sm"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "Sizes",
+        "Disabled & loading"
+      ]
+    },
+    {
+      "name": "Checkbox",
+      "group": "inputs",
+      "folder": "ui/checkbox",
+      "props": {
+        "size": [
+          "md",
+          "sm"
+        ]
+      },
+      "demos": [
+        "Sizes",
+        "States"
+      ]
+    },
+    {
+      "name": "Combobox",
+      "group": "inputs",
+      "folder": "ui/combobox",
+      "props": {},
+      "demos": [
+        "Basic",
+        "Disabled"
+      ]
+    },
+    {
+      "name": "FileDrop",
+      "group": "inputs",
+      "folder": "ui/file-drop",
+      "props": {},
+      "demos": [
+        "Default",
+        "Single image only"
+      ]
+    },
+    {
+      "name": "Input",
+      "group": "inputs",
+      "folder": "ui/input",
+      "props": {
+        "variant": [
+          "filled"
+        ],
+        "size": [
+          "md",
+          "sm"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "Sizes",
+        "States"
+      ]
+    },
+    {
+      "name": "Label",
+      "group": "inputs",
+      "folder": "ui/label",
+      "props": {},
+      "demos": [
+        "Default"
+      ]
+    },
+    {
+      "name": "MultiSelect",
+      "group": "inputs",
+      "folder": "ui/multi-select",
+      "props": {},
+      "demos": [
+        "Basic",
+        "Empty",
+        "Disabled"
+      ]
+    },
+    {
+      "name": "RadioGroup",
+      "group": "inputs",
+      "folder": "ui/radio-group",
+      "props": {},
+      "demos": [
+        "Default"
+      ]
+    },
+    {
+      "name": "Select",
+      "group": "inputs",
+      "folder": "ui/select",
+      "props": {
+        "size": [
+          "md",
+          "sm"
+        ]
+      },
+      "demos": [
+        "Sizes",
+        "States",
+        "No indicator"
+      ]
+    },
+    {
+      "name": "Slider",
+      "group": "inputs",
+      "folder": "ui/slider",
+      "props": {},
+      "demos": [
+        "Basic slider"
+      ]
+    },
+    {
+      "name": "Switch",
+      "group": "inputs",
+      "folder": "ui/switch",
+      "props": {
+        "size": [
+          "md",
+          "sm"
+        ]
+      },
+      "demos": [
+        "Sizes",
+        "States"
+      ]
+    },
+    {
+      "name": "Textarea",
+      "group": "inputs",
+      "folder": "ui/textarea",
+      "props": {
+        "variant": [
+          "filled"
+        ]
+      },
+      "demos": [
+        "Variants",
+        "States"
+      ]
+    },
+    {
+      "name": "Breadcrumbs",
+      "group": "navigation",
+      "folder": "ui/breadcrumbs",
+      "props": {},
+      "demos": [
+        "Default",
+        "Custom separator"
+      ]
+    },
+    {
+      "name": "Pagination",
+      "group": "navigation",
+      "folder": "ui/pagination",
+      "props": {},
+      "demos": [
+        "Default (10 pages)",
+        "Few pages"
+      ]
+    },
+    {
+      "name": "Tabs",
+      "group": "navigation",
+      "folder": "ui/tabs",
+      "props": {
+        "variant": [
+          "filing",
+          "pills",
+          "underline"
+        ]
+      },
+      "demos": [
+        "Underline",
+        "Pills",
+        "Filing"
+      ]
+    },
+    {
+      "name": "CommandPalette",
+      "group": "overlay",
+      "folder": "ui/command-palette",
+      "props": {
+        "variant": [
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Basic",
+        "With groups"
+      ]
+    },
+    {
+      "name": "Dialog",
+      "group": "overlay",
+      "folder": "ui/dialog",
+      "props": {
+        "size": [
+          "lg",
+          "md",
+          "sm"
+        ],
+        "variant": [
+          "ghost"
+        ]
+      },
+      "demos": [
+        "Sizes",
+        "Form example"
+      ]
+    },
+    {
+      "name": "Drawer",
+      "group": "overlay",
+      "folder": "ui/drawer",
+      "props": {
+        "side": [
+          "left",
+          "right"
+        ],
+        "size": [
+          "md",
+          "sm"
+        ],
+        "variant": [
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Left & Right"
+      ]
+    },
+    {
+      "name": "DropdownMenu",
+      "group": "overlay",
+      "folder": "ui/dropdown-menu",
+      "props": {
+        "variant": [
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Default"
+      ]
+    },
+    {
+      "name": "Popover",
+      "group": "overlay",
+      "folder": "ui/popover",
+      "props": {
+        "variant": [
+          "secondary"
+        ],
+        "size": [
+          "sm"
+        ]
+      },
+      "demos": [
+        "Default"
+      ]
+    },
+    {
+      "name": "Tooltip",
+      "group": "overlay",
+      "folder": "ui/tooltip",
+      "props": {
+        "side": [
+          "bottom",
+          "left",
+          "right",
+          "top"
+        ],
+        "variant": [
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Directions"
+      ]
+    },
+    {
+      "name": "ConfirmDialog",
+      "group": "patterns",
+      "folder": "ui/patterns/confirm-dialog",
+      "props": {
+        "variant": [
+          "danger",
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Variants"
+      ]
+    },
+    {
+      "name": "FormField",
+      "group": "patterns",
+      "folder": "ui/patterns/form-field",
+      "props": {
+        "type": [
+          "password"
+        ]
+      },
+      "demos": [
+        "Default",
+        "With hint",
+        "Required with error"
+      ]
+    },
+    {
+      "name": "PageShell",
+      "group": "patterns",
+      "folder": "ui/patterns/page-shell",
+      "props": {
+        "variant": [
+          "secondary"
+        ]
+      },
+      "demos": [
+        "Default",
+        "With actions"
+      ]
+    },
+    {
+      "name": "StatCard",
+      "group": "patterns",
+      "folder": "ui/patterns/stat-card",
+      "props": {},
+      "demos": [
+        "Default"
+      ]
+    },
+    {
+      "name": "Toolbar",
+      "group": "patterns",
+      "folder": "ui/patterns/toolbar",
+      "props": {
+        "size": [
+          "sm"
+        ],
+        "variant": [
+          "primary",
+          "secondary"
+        ],
+        "style": [
+          "soft"
+        ]
+      },
+      "demos": [
+        "All slots filled",
+        "With leading label",
+        "Result count + removable filter chips",
+        "Narrow / responsive collapse"
+      ]
+    },
+    {
+      "name": "Typography & Tokens",
+      "group": "typography",
+      "folder": "ui/typography",
+      "props": {},
+      "demos": [
+        "Font families",
+        "Text sizes",
+        "Colors",
+        "Radius & spacing"
+      ]
+    }
+  ]
+}

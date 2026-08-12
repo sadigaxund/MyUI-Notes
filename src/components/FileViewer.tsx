@@ -56,6 +56,7 @@ function View({ file }: { file: NonNullable<FileViewerProps["file"]> }) {
         header={file.name}
         highlight={canHighlight(language)}
         showLineNumbers={language !== undefined}
+        className="codeview-clean border-transparent"
       />
     </div>
   );

@@ -30,6 +30,10 @@ The full, authoritative manifest ships with the package at
 names). Demo/source code is **not** packaged — it lives in the library repo:
 https://github.com/sadigaxund/my-you-eye
 
+The my-you-eye skill (`my-you-eye`) is registered in
+`.opencode/skills/my-you-eye/` — load it before building any UI so you pick an
+existing component instead of hand-rolling one.
+
 ## Using my-you-eye
 
 ```tsx
