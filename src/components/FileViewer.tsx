@@ -175,6 +175,30 @@ function parseBlocks(lines: string[]): MarkdownBlock[] {
   return blocks;
 }
 
+function getBlockClass(type: string, text: string): string {
+  const trimmed = text.trim();
+  const baseClass = "w-full font-mono bg-transparent border-none outline-none resize-none overflow-hidden p-0 focus:ring-0 ";
+
+  if (type === "code") {
+    return baseClass + "text-sm bg-code-bg/30 p-4 rounded-ui my-2";
+  }
+
+  if (trimmed.startsWith("# ")) {
+    return baseClass + "text-3xl font-semibold my-2";
+  }
+  if (trimmed.startsWith("## ")) {
+    return baseClass + "text-2xl font-semibold my-2";
+  }
+  if (trimmed.startsWith("### ")) {
+    return baseClass + "text-xl font-semibold my-2";
+  }
+  if (type === "blockquote") {
+    return baseClass + "border-l-4 border-border pl-4 italic text-muted-foreground my-2";
+  }
+
+  return baseClass + "text-base leading-relaxed my-2";
+}
+
 function LiveMarkdownEditor({
   text,
   onChange,
@@ -248,21 +272,27 @@ function LiveMarkdownEditor({
                   const end = el.selectionEnd;
                   const val = el.value;
 
-                  if (e.key === "ArrowUp" && start === 0 && end === 0) {
-                    e.preventDefault();
-                    const idx = blocks.findIndex((b) => b.id === block.id);
-                    if (idx > 0) {
-                      const prevBlock = blocks[idx - 1];
-                      setActiveBlockId(prevBlock.id);
-                      setFocusPosition({ blockId: prevBlock.id, cursor: "end" });
+                  if (e.key === "ArrowUp") {
+                    const hasNewlineBefore = val.slice(0, start).includes("\n");
+                    if (!hasNewlineBefore) {
+                      e.preventDefault();
+                      const idx = blocks.findIndex((b) => b.id === block.id);
+                      if (idx > 0) {
+                        const prevBlock = blocks[idx - 1];
+                        setActiveBlockId(prevBlock.id);
+                        setFocusPosition({ blockId: prevBlock.id, cursor: "end" });
+                      }
                     }
-                  } else if (e.key === "ArrowDown" && start === val.length && end === val.length) {
-                    e.preventDefault();
-                    const idx = blocks.findIndex((b) => b.id === block.id);
-                    if (idx < blocks.length - 1) {
-                      const nextBlock = blocks[idx + 1];
-                      setActiveBlockId(nextBlock.id);
-                      setFocusPosition({ blockId: nextBlock.id, cursor: "start" });
+                  } else if (e.key === "ArrowDown") {
+                    const hasNewlineAfter = val.slice(start).includes("\n");
+                    if (!hasNewlineAfter) {
+                      e.preventDefault();
+                      const idx = blocks.findIndex((b) => b.id === block.id);
+                      if (idx < blocks.length - 1) {
+                        const nextBlock = blocks[idx + 1];
+                        setActiveBlockId(nextBlock.id);
+                        setFocusPosition({ blockId: nextBlock.id, cursor: "start" });
+                      }
                     }
                   } else if (e.key === "Backspace" && start === 0 && end === 0) {
                     e.preventDefault();
@@ -308,7 +338,7 @@ function LiveMarkdownEditor({
                     }, 0);
                   }
                 }}
-                className="w-full font-mono text-sm bg-transparent border-none outline-none resize-none overflow-hidden p-0 focus:ring-0"
+                className={getBlockClass(block.type, blockText)}
               />
             </div>
           );
@@ -377,7 +407,7 @@ function View({
       );
     } else {
       return (
-        <div className="mx-auto max-w-3xl p-6">
+        <div className="markdown-body mx-auto max-w-3xl p-6">
           <LiveMarkdownEditor text={markdownText} onChange={setMarkdownText} />
         </div>
       );

@@ -83,3 +83,9 @@ body {
 .markdown-body .group.rounded-ui > div:first-child > div:first-child {
   display: none;
 }
+
+/* Ensure the markdown preview content body uses the mono font family, 
+ * matching the code viewer and editor textareas. */
+.markdown-body {
+  font-family: var(--font-mono) !important;
+}
