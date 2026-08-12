@@ -43,8 +43,14 @@ import "my-you-eye/styles.css";
 
 - Requires Tailwind v4 (`@tailwindcss/vite`). The package's `styles.css`
   contains `@import "tailwindcss"`; the utility classes used inside the package
-  must be scanned — keep the `@source "../node_modules/my-you-eye/dist";`
-  directive in `src/styles/global.css`.
+  must be scanned — keep the `@source "../vendor/my-you-eye";` directive in
+  `src/styles/global.css`.
+  - The scanner applies `.gitignore` rules to `@source` paths, so
+    `node_modules/my-you-eye/dist` can never be scanned (tailwindlabs
+    tailwindcss#16669/#18418). Instead, `scripts/sync-my-you-eye.mjs`
+    (run via `postinstall`) copies the package's dist JS to
+    `vendor/my-you-eye/index.js`, which is scanned normally. Rerun
+    `npm run postinstall` after bumping the `my-you-eye` version.
 - Themes are CSS token overrides: `.dark` class on `<html>` for dark mode,
   `data-theme="..."` (`neon`, `contrast`, `glass`, `comic`, ...) for other
   themes. Token overrides belong in CSS, never in component code.

@@ -1,9 +1,31 @@
 @import "tailwindcss";
-@source "../node_modules/my-you-eye/dist";
+@source "../vendor/my-you-eye";
 
-/* Hide CodeBlock's chrome (file name, language badge, copy button) for a
- * bare editor look. Published my-you-eye has no prop for this; remove once
- * the library ships one (see sadigaxund/my-you-eye issue #N). */
+/* Only the file content (code/markdown text) is copyable; UI chrome is not. */
+body {
+  user-select: none;
+}
+
+/* Bare-editor look for the code viewer. Published my-you-eye has no props
+ * for this; remove once the library ships them (see
+ * sadigaxund/my-you-eye issue #2). */
+.codeview-clean {
+  border-color: transparent;
+}
 .codeview-clean > div:first-child {
   display: none;
+}
+.codeview-clean div[aria-hidden="true"] {
+  min-width: 3rem;
+  padding-right: 1.25rem;
+  text-align: right;
+  border-right-color: transparent;
+}
+/* Integer line-height (18px at text-xs) so selection highlights between
+ * adjacent rows stay contiguous; 1.625 * 12px = 19.5px leaves subpixel
+ * gaps when dragging a selection across lines. Applies to the gutter and
+ * the code body alike so rows stay aligned. */
+.codeview-clean pre,
+.codeview-clean div[aria-hidden="true"] {
+  line-height: 1.5;
 }

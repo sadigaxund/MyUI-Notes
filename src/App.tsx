@@ -181,7 +181,7 @@ export default function App() {
       <main className="flex min-w-0 flex-1 flex-col">
         {tabs.length === 0 ? (
           <div className="min-h-0 flex-1">
-            <FileViewer file={null} loading={fileLoading} error={error} />
+            <FileViewer file={null} loading={fileLoading} error={error} workspaceName={workspaceName} />
           </div>
         ) : (
           <TabBar
@@ -190,7 +190,12 @@ export default function App() {
             onActivate={setActivePath}
             onClose={handleCloseTab}
           >
-            <FileViewer file={activeTab} loading={fileLoading} error={error} />
+            <FileViewer
+              file={activeTab}
+              loading={fileLoading}
+              error={error}
+              workspaceName={workspaceName}
+            />
           </TabBar>
         )}
       </main>

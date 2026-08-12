@@ -7,6 +7,7 @@ interface FileViewerProps {
   file: { path: string; name: string; data: FileContent } | null;
   loading: boolean;
   error: string | null;
+  workspaceName?: string | null;
 }
 
 function pathSegments(path: string): string[] {
@@ -42,27 +43,27 @@ function View({ file }: { file: NonNullable<FileViewerProps["file"]> }) {
 
   if (kind === "markdown") {
     return (
-      <div className="mx-auto max-w-3xl p-6">
+      <div className="mx-auto max-w-3xl select-text p-6">
         <Markdown content={file.data.text} />
       </div>
     );
   }
 
   return (
-    <div className="p-4">
+    <div className="flex min-h-full flex-col">
       <CodeBlock
         code={file.data.text}
         language={language}
         header={file.name}
         highlight={canHighlight(language)}
         showLineNumbers={language !== undefined}
-        className="codeview-clean border-transparent"
+        className="codeview-clean flex-1"
       />
     </div>
   );
 }
 
-export function FileViewer({ file, loading, error }: FileViewerProps) {
+export function FileViewer({ file, loading, error, workspaceName }: FileViewerProps) {
   const [showSkeleton, setShowSkeleton] = useState(false);
 
   useEffect(() => {
@@ -121,7 +122,11 @@ export function FileViewer({ file, loading, error }: FileViewerProps) {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-2">
-        <Breadcrumbs items={pathSegments(file.path).map((label) => ({ label }))} />
+        <Breadcrumbs
+          items={[workspaceName, ...pathSegments(file.path)]
+            .filter((label): label is string => Boolean(label))
+            .map((label) => ({ label }))}
+        />
         <span className="flex-1" />
         <Badge variant="neutral">{label}</Badge>
       </div>
