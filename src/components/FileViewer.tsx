@@ -63,10 +63,10 @@ function CodeBody({ path, name, text }: { path: string; name: string; text: stri
 
 function View({
   file,
-  markdownMode,
+  viewMode,
 }: {
   file: NonNullable<FileViewerProps["file"]>;
-  markdownMode: "rendered" | "raw";
+  viewMode: "read" | "edit";
 }) {
   const kind = fileKind(file.path);
 
@@ -93,12 +93,20 @@ function View({
     );
   }
 
-  if (kind === "markdown" && markdownMode === "rendered") {
-    return (
-      <div className="markdown-body mx-auto max-w-3xl select-text p-6">
-        <Markdown content={file.data.text} />
-      </div>
-    );
+  if (kind === "markdown") {
+    if (viewMode === "read") {
+      return (
+        <div className="markdown-body mx-auto max-w-3xl select-text p-6">
+          <Markdown content={file.data.text} />
+        </div>
+      );
+    } else {
+      return (
+        <div className="mx-auto max-w-3xl p-6">
+          <CodeBody path={file.path} name={file.name} text={file.data.text} />
+        </div>
+      );
+    }
   }
 
   return <CodeBody path={file.path} name={file.name} text={file.data.text} />;
@@ -106,7 +114,7 @@ function View({
 
 export function FileViewer({ file, loading, error, workspaceName }: FileViewerProps) {
   const [showSkeleton, setShowSkeleton] = useState(false);
-  const [markdownMode, setMarkdownMode] = useState<"rendered" | "raw">("rendered");
+  const [viewMode, setViewMode] = useState<"read" | "edit">("read");
 
   useEffect(() => {
     if (!loading) {
@@ -118,7 +126,7 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
   }, [loading]);
 
   useEffect(() => {
-    setMarkdownMode("rendered");
+    setViewMode("read");
   }, [file?.path]);
 
   if (error) {
@@ -160,9 +168,9 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
 
   const label =
     isMarkdown
-      ? markdownMode === "rendered"
-        ? "Markdown: Rendered"
-        : "Markdown: Raw"
+      ? viewMode === "read"
+        ? "Read Mode"
+        : "Edit Mode"
       : kind === "image"
         ? "Image"
         : language
@@ -171,14 +179,14 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
 
   const badgeVariant =
     isMarkdown
-      ? markdownMode === "rendered"
-        ? "success"
+      ? viewMode === "read"
+        ? "neutral"
         : "primary"
       : "neutral";
 
   const handleBadgeClick = () => {
     if (isMarkdown) {
-      setMarkdownMode((prev) => (prev === "rendered" ? "raw" : "rendered"));
+      setViewMode((prev) => (prev === "read" ? "edit" : "read"));
     }
   };
 
@@ -205,7 +213,7 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
         </Badge>
       </div>
       <ScrollArea className="min-h-0 flex-1">
-        <View file={file} markdownMode={markdownMode} />
+        <View file={file} viewMode={viewMode} />
       </ScrollArea>
     </div>
   );

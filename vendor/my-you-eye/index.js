@@ -2431,7 +2431,7 @@ function CopyButton({ copied, onCopy }) {
   );
 }
 var CodeBlock = forwardRef42(
-  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = false, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, ...props }, ref) => {
+  ({ className, variant, code, language, header, wrap = true, showLineNumbers = false, highlight = true, highlightLines, highlightColor = "primary", highlightGroups, highlightRanges, ...props }, ref) => {
     const [copied, setCopied] = useState2(false);
     const copy = useCallback3(() => {
       navigator.clipboard.writeText(code).then(() => {
