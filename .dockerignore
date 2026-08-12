@@ -1,0 +1,10 @@
+.git
+.gitmodules
+node_modules
+out
+release-packages
+release-npm-package
+lib/vscode
+lib/vscode-reh-web-*
+.cache
+*.log
