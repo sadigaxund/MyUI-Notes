@@ -13,32 +13,6 @@ interface FileTreePanelProps {
   onSelect: (id: string) => void;
 }
 
-export function FolderIcon() {
-  return (
-    <svg viewBox="0 0 16 16" aria-hidden>
-      <path
-        d="M1.5 3.5h4l1.5 2h7.5v7a1 1 0 0 1-1 1h-12a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-export function FileIcon() {
-  return (
-    <svg viewBox="0 0 16 16" aria-hidden>
-      <path
-        d="M4 1.5h5.5L13 5v8.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        opacity="0.8"
-      />
-      <path d="M9 1.5V5h3.5" fill="none" stroke="currentColor" strokeWidth="1.2" />
-    </svg>
-  );
-}
-
 export function FileTreePanel({
   workspaceName,
   loading,

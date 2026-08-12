@@ -1,4 +1,5 @@
 export type FileKind = "markdown" | "code" | "image" | "plain" | "binary";
+export type IconTone = "primary" | "success" | "warning" | "muted";
 
 const MARKDOWN_EXTENSIONS = new Set(["md", "mdx", "markdown"]);
 
@@ -12,6 +13,18 @@ const IMAGE_EXTENSIONS = new Set([
   "png",
   "svg",
   "webp",
+]);
+
+const CONFIG_EXTENSIONS = new Set([
+  "env",
+  "gitignore",
+  "ini",
+  "json",
+  "jsonc",
+  "lock",
+  "toml",
+  "yaml",
+  "yml",
 ]);
 
 /** Extensions that my-you-eye's CodeBlock can syntax-highlight. */
@@ -79,4 +92,13 @@ export function extensionOf(path: string): string {
   const base = path.split("/").pop() ?? "";
   const dot = base.lastIndexOf(".");
   return dot >= 0 ? base.slice(dot + 1).toLowerCase() : "";
+}
+
+/** Theme-aware accent for the file icon in the tree. */
+export function iconTone(path: string): IconTone {
+  const ext = extensionOf(path);
+  if (MARKDOWN_EXTENSIONS.has(ext)) return "primary";
+  if (IMAGE_EXTENSIONS.has(ext)) return "success";
+  if (CONFIG_EXTENSIONS.has(ext)) return "warning";
+  return "muted";
 }

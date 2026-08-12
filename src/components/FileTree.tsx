@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useRef } from "react";
 import type { ReactNode } from "react";
 import { cn } from "my-you-eye";
+import { iconTone } from "../lib/fileType";
+import { FileIcon, FolderIcon } from "./icons";
 
 export interface FileTreeNode {
   /** Workspace-relative path ("" for the workspace root). */
@@ -78,15 +80,15 @@ function Row({ node, depth, expanded, selected, onToggle, onSelect }: RowProps) 
         className="flex shrink-0 items-center justify-center"
         style={{ width: 12 + depth * 16 }}
       >
-        {isDirectory ? (
-          <ChevronIcon expanded={expanded} />
-        ) : null}
+        {isDirectory ? <ChevronIcon expanded={expanded} /> : null}
       </span>
-      {node.icon ? (
-        <span className="mr-1.5 flex size-4 shrink-0 items-center justify-center text-muted">
-          {node.icon}
-        </span>
-      ) : null}
+      <span className="mr-1.5 flex shrink-0 items-center">
+        {isDirectory ? (
+          <FolderIcon open={expanded} />
+        ) : (
+          <FileIcon tone={iconTone(node.id)} />
+        )}
+      </span>
       <span
         className={cn(
           "min-w-0 flex-1 truncate py-1 pr-2 text-sm leading-normal",

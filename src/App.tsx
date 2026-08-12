@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { FileTreePanel, FolderIcon, FileIcon } from "./components/FileTreePanel";
+import { FileTreePanel } from "./components/FileTreePanel";
 import type { FileTreeNode } from "./components/FileTree";
+import { TabBar } from "./components/TabBar";
 import { FileViewer } from "./components/FileViewer";
 import { openFSAWorkspace } from "./workspace/fsa";
 import { probeBackendWorkspace } from "./workspace/http";
@@ -12,7 +13,6 @@ function entriesToNodes(entries: WorkspaceEntry[]): FileTreeNode[] {
     id: entry.path,
     label: entry.name,
     kind: entry.kind,
-    icon: entry.kind === "directory" ? <FolderIcon /> : <FileIcon />,
     children: entry.kind === "directory" ? [] : undefined,
   }));
 }
@@ -44,8 +44,8 @@ export default function App() {
   const [workspaceName, setWorkspaceName] = useState<string | null>(null);
   const [tree, setTree] = useState<FileTreeNode[]>([]);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [file, setFile] = useState<{ path: string; name: string; data: FileContent } | null>(null);
+  const [tabs, setTabs] = useState<{ path: string; name: string; data: FileContent }[]>([]);
+  const [activePath, setActivePath] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [panelError, setPanelError] = useState<string | null>(null);
@@ -63,14 +63,14 @@ export default function App() {
     const entries = await workspace.list("");
     setTree(entriesToNodes(entries));
     setExpanded(new Set());
+    setTabs([]);
+    setActivePath(null);
   };
 
   const handleOpenFolder = async () => {
     setLoading(true);
     setPanelError(null);
     setError(null);
-    setFile(null);
-    setSelectedId(null);
     try {
       const workspace = await openFSAWorkspace();
       if (!workspace) {
@@ -126,9 +126,10 @@ export default function App() {
   };
 
   const handleSelect = async (id: string) => {
-    setSelectedId(id);
+    setActivePath(id);
     const node = findNode(tree, id);
     if (!node || node.kind === "directory") return;
+    if (tabs.some((tab) => tab.path === id)) return;
     const workspace = workspaceRef.current;
     if (!workspace) return;
     const epoch = workspaceEpoch.current;
@@ -137,7 +138,7 @@ export default function App() {
     try {
       const data = await workspace.read(id);
       if (epoch !== workspaceEpoch.current) return;
-      setFile({ path: id, name: node.label, data });
+      setTabs((prev) => [...prev, { path: id, name: node.label, data }]);
     } catch (err) {
       if (epoch !== workspaceEpoch.current) return;
       setError(err instanceof Error ? err.message : String(err));
@@ -145,6 +146,21 @@ export default function App() {
       if (epoch === workspaceEpoch.current) setLoading(false);
     }
   };
+
+  const handleCloseTab = (path: string) => {
+    setTabs((prev) => {
+      const index = prev.findIndex((tab) => tab.path === path);
+      if (index === -1) return prev;
+      const next = prev.filter((tab) => tab.path !== path);
+      if (path === activePath) {
+        const neighbor = next[Math.min(index, next.length - 1)];
+        setActivePath(neighbor ? neighbor.path : null);
+      }
+      return next;
+    });
+  };
+
+  const activeTab = tabs.find((tab) => tab.path === activePath) ?? null;
 
   return (
     <div className="flex h-screen min-h-0 w-full overflow-hidden bg-bg text-fg">
@@ -155,14 +171,22 @@ export default function App() {
           error={panelError}
           tree={tree}
           expandedKeys={expanded}
-          selectedId={selectedId}
+          selectedId={activePath}
           onOpenFolder={handleOpenFolder}
           onToggle={handleToggle}
           onSelect={handleSelect}
         />
       </aside>
-      <main className="min-w-0 flex-1">
-        <FileViewer file={file} loading={loading} error={error} />
+      <main className="flex min-w-0 flex-1 flex-col">
+        <TabBar
+          tabs={tabs}
+          activePath={activePath}
+          onActivate={setActivePath}
+          onClose={handleCloseTab}
+        />
+        <div className="min-h-0 flex-1">
+          <FileViewer file={activeTab} loading={loading} error={error} />
+        </div>
       </main>
     </div>
   );
