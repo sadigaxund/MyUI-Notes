@@ -14,8 +14,33 @@ const IMAGE_EXTENSIONS = new Set([
   "webp",
 ]);
 
-/** Extensions that my-you-eye's CodeBlock can syntax-highlight. */
-const HIGHLIGHTABLE = new Set(["bash", "js", "json", "ts", "tsx"]);
+/** Languages my-you-eye's CodeBlock can actually tokenize (dist TOKENIZERS map). */
+const HIGHLIGHTABLE = new Set([
+  "bash",
+  "sh",
+  "shell",
+  "css",
+  "scss",
+  "less",
+  "html",
+  "htm",
+  "xml",
+  "js",
+  "jsx",
+  "ts",
+  "tsx",
+  "javascript",
+  "typescript",
+  "json",
+  "tsconfig",
+  "python",
+  "py",
+  "yaml",
+  "yml",
+  "sql",
+  "pgsql",
+  "mysql",
+]);
 
 const CODE_LANGUAGES: Record<string, string> = {
   c: "c",
@@ -32,6 +57,8 @@ const CODE_LANGUAGES: Record<string, string> = {
   ini: "ini",
   java: "java",
   js: "js",
+  cjs: "js",
+  mjs: "js",
   json: "json",
   jsonc: "json",
   jsx: "jsx",
@@ -48,6 +75,8 @@ const CODE_LANGUAGES: Record<string, string> = {
   sh: "bash",
   sql: "sql",
   svg: "xml",
+  tf: "hcl",
+  hcl: "hcl",
   toml: "toml",
   ts: "ts",
   tsx: "tsx",
@@ -63,11 +92,12 @@ export function fileKind(path: string): FileKind {
   const ext = extensionOf(path);
   if (MARKDOWN_EXTENSIONS.has(ext)) return "markdown";
   if (IMAGE_EXTENSIONS.has(ext)) return "image";
-  if (ext in CODE_LANGUAGES) return "code";
-  return ext === "" ? "plain" : "plain";
+  return languageFor(path) ? "code" : "plain";
 }
 
 export function languageFor(path: string): string | undefined {
+  const base = path.split("/").pop() ?? "";
+  if (/^dockerfile(?:\.|$)/i.test(base)) return "dockerfile";
   return CODE_LANGUAGES[extensionOf(path)];
 }
 

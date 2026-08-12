@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { FormEvent } from "react";
 import { Alert, Badge, Breadcrumbs, CodeBlock, EmptyState, Markdown, ScrollArea, Skeleton } from "my-you-eye";
 import type { FileContent } from "../workspace/types";
 import { canHighlight, fileKind, languageFor } from "../lib/fileType";
@@ -14,9 +15,54 @@ function pathSegments(path: string): string[] {
   return path.split("/").filter(Boolean);
 }
 
+/** Tracks edits in the editable code body without re-rendering on each key. */
+function useEditableText(path: string, initial: string) {
+  const [text, setText] = useState(initial);
+  const textRef = useRef(initial);
+
+  useEffect(() => {
+    textRef.current = initial;
+    setText(initial);
+  }, [path, initial]);
+
+  return { text, setText, textRef };
+}
+
+function CodeBody({ path, name, text }: { path: string; name: string; text: string }) {
+  const language = languageFor(path);
+  const { text: currentText, setText, textRef } = useEditableText(path, text);
+
+  // The library renders one <div> per line inside <code>; empty lines are a
+  // single space. Rebuild the raw text with newlines between them.
+  const syncFromDom = (event: FormEvent<HTMLPreElement>) => {
+    const code = event.currentTarget.querySelector("code");
+    if (!code) return;
+    textRef.current = [...code.children]
+      .map((line) => (line.textContent ?? "").replace(/^ $/, ""))
+      .join("\n");
+  };
+
+  return (
+    <div className="flex min-h-full flex-col">
+      <CodeBlock
+        code={currentText}
+        language={language}
+        header={name}
+        highlight={canHighlight(language)}
+        showLineNumbers={language !== undefined}
+        contentEditable
+        suppressContentEditableWarning
+        spellCheck={false}
+        onInput={syncFromDom}
+        onBlur={() => setText(textRef.current)}
+        className="codeview-clean flex-1"
+      />
+    </div>
+  );
+}
+
 function View({ file }: { file: NonNullable<FileViewerProps["file"]> }) {
   const kind = fileKind(file.path);
-  const language = languageFor(file.path);
 
   if (file.data.kind === "image") {
     return (
@@ -49,18 +95,7 @@ function View({ file }: { file: NonNullable<FileViewerProps["file"]> }) {
     );
   }
 
-  return (
-    <div className="flex min-h-full flex-col">
-      <CodeBlock
-        code={file.data.text}
-        language={language}
-        header={file.name}
-        highlight={canHighlight(language)}
-        showLineNumbers={language !== undefined}
-        className="codeview-clean flex-1"
-      />
-    </div>
-  );
+  return <CodeBody path={file.path} name={file.name} text={file.data.text} />;
 }
 
 export function FileViewer({ file, loading, error, workspaceName }: FileViewerProps) {
@@ -123,6 +158,7 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-2">
         <Breadcrumbs
+          separator="›"
           items={[workspaceName, ...pathSegments(file.path)]
             .filter((label): label is string => Boolean(label))
             .map((label) => ({ label }))}

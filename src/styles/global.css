@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @source "../vendor/my-you-eye";
 
+@theme {
+  --font-sans: "Titillium Web", "Inter", "system-ui", sans-serif;
+  --font-mono: "MesloLGS Nerd Font Mono", "JetBrains Mono", "Fira Code",
+    ui-monospace, monospace;
+}
+
 /* Only the file content (code/markdown text) is copyable; UI chrome is not. */
 body {
   user-select: none;
@@ -17,9 +23,15 @@ body {
 }
 .codeview-clean div[aria-hidden="true"] {
   min-width: 3rem;
-  padding-right: 1.25rem;
+  padding-right: 2.25rem;
   text-align: right;
   border-right-color: transparent;
+}
+/* The gap between the numbers and the code belongs entirely to the gutter
+ * (select-none) so dragging across it never highlights that strip: strip
+ * the line divs' left padding (px-panel) here. */
+.codeview-clean pre code > div {
+  padding-left: 0;
 }
 /* Integer line-height (18px at text-xs) so selection highlights between
  * adjacent rows stay contiguous; 1.625 * 12px = 19.5px leaves subpixel
