@@ -1,4 +1,5 @@
-import { Tabs, TabsList, TabsTrigger } from "my-you-eye";
+import type { ReactNode } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "my-you-eye";
 import { fileIconPath } from "../lib/fileIcons";
 
 export interface OpenTab {
@@ -11,21 +12,23 @@ interface TabBarProps {
   activePath: string | null;
   onActivate: (path: string) => void;
   onClose: (path: string) => void;
+  children: ReactNode;
 }
 
 /**
- * Open-file strip built on my-you-eye's Tabs (filing variant — the
- * "file cabinet" look). Each tab carries a close affordance; closing stops
- * propagation so it doesn't switch tabs.
+ * Open-file cabinet built on my-you-eye's Tabs, exactly as the library's own
+ * showcase composes it: a filing-variant TabsList with the content panel
+ * (TabsContent) underneath, so the active tab merges seamlessly into the
+ * panel below it. forceMount keeps the panel alive across switches, so the
+ * viewer keeps its state (scroll, copy) instead of remounting.
  */
-export function TabBar({ tabs, activePath, onActivate, onClose }: TabBarProps) {
-  if (tabs.length === 0) return null;
+export function TabBar({ tabs, activePath, onActivate, onClose, children }: TabBarProps) {
   return (
     <Tabs
       variant="filing"
-      value={activePath ?? undefined}
+      value={activePath ?? ""}
       onValueChange={onActivate}
-      className="shrink-0"
+      className="flex min-h-0 flex-1 flex-col"
     >
       <TabsList className="w-full justify-start">
         {tabs.map((tab) => (
@@ -53,6 +56,13 @@ export function TabBar({ tabs, activePath, onActivate, onClose }: TabBarProps) {
           </TabsTrigger>
         ))}
       </TabsList>
+      <TabsContent
+        forceMount
+        value={activePath ?? ""}
+        className="min-h-0 flex-1 p-0"
+      >
+        {children}
+      </TabsContent>
     </Tabs>
   );
 }

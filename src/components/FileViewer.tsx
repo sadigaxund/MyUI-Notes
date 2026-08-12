@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Alert, Badge, Breadcrumbs, CodeBlock, EmptyState, Markdown, ScrollArea, Skeleton } from "my-you-eye";
 import type { FileContent } from "../workspace/types";
 import { canHighlight, fileKind, languageFor } from "../lib/fileType";
@@ -61,6 +62,17 @@ function View({ file }: { file: NonNullable<FileViewerProps["file"]> }) {
 }
 
 export function FileViewer({ file, loading, error }: FileViewerProps) {
+  const [showSkeleton, setShowSkeleton] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setShowSkeleton(false);
+      return;
+    }
+    const timer = setTimeout(() => setShowSkeleton(true), 120);
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   if (error) {
     return (
       <div className="flex h-full items-start justify-center p-6">
@@ -71,7 +83,11 @@ export function FileViewer({ file, loading, error }: FileViewerProps) {
     );
   }
 
-  if (loading) {
+  if (loading && !showSkeleton) {
+    return null;
+  }
+
+  if (showSkeleton) {
     return (
       <div className="space-y-2 p-6">
         <Skeleton shape="text" />

@@ -46,7 +46,8 @@ export default function App() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [tabs, setTabs] = useState<{ path: string; name: string; data: FileContent }[]>([]);
   const [activePath, setActivePath] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [treeLoading, setTreeLoading] = useState(false);
+  const [fileLoading, setFileLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [panelError, setPanelError] = useState<string | null>(null);
 
@@ -68,7 +69,7 @@ export default function App() {
   };
 
   const handleOpenFolder = async () => {
-    setLoading(true);
+    setTreeLoading(true);
     setPanelError(null);
     setError(null);
     try {
@@ -83,7 +84,7 @@ export default function App() {
       }
       setPanelError(err instanceof Error ? err.message : String(err));
     } finally {
-      setLoading(false);
+      setTreeLoading(false);
     }
   };
 
@@ -133,7 +134,7 @@ export default function App() {
     const workspace = workspaceRef.current;
     if (!workspace) return;
     const epoch = workspaceEpoch.current;
-    setLoading(true);
+    setFileLoading(true);
     setError(null);
     try {
       const data = await workspace.read(id);
@@ -143,7 +144,7 @@ export default function App() {
       if (epoch !== workspaceEpoch.current) return;
       setError(err instanceof Error ? err.message : String(err));
     } finally {
-      if (epoch === workspaceEpoch.current) setLoading(false);
+      if (epoch === workspaceEpoch.current) setFileLoading(false);
     }
   };
 
@@ -167,7 +168,7 @@ export default function App() {
       <aside className="w-72 shrink-0 border-r border-border">
         <FileTreePanel
           workspaceName={workspaceName}
-          loading={loading}
+          loading={treeLoading}
           error={panelError}
           tree={tree}
           expandedKeys={expanded}
@@ -178,15 +179,20 @@ export default function App() {
         />
       </aside>
       <main className="flex min-w-0 flex-1 flex-col">
-        <TabBar
-          tabs={tabs}
-          activePath={activePath}
-          onActivate={setActivePath}
-          onClose={handleCloseTab}
-        />
-        <div className="min-h-0 flex-1">
-          <FileViewer file={activeTab} loading={loading} error={error} />
-        </div>
+        {tabs.length === 0 ? (
+          <div className="min-h-0 flex-1">
+            <FileViewer file={null} loading={fileLoading} error={error} />
+          </div>
+        ) : (
+          <TabBar
+            tabs={tabs}
+            activePath={activePath}
+            onActivate={setActivePath}
+            onClose={handleCloseTab}
+          >
+            <FileViewer file={activeTab} loading={fileLoading} error={error} />
+          </TabBar>
+        )}
       </main>
     </div>
   );
