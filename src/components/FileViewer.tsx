@@ -61,7 +61,13 @@ function CodeBody({ path, name, text }: { path: string; name: string; text: stri
   );
 }
 
-function View({ file }: { file: NonNullable<FileViewerProps["file"]> }) {
+function View({
+  file,
+  markdownMode,
+}: {
+  file: NonNullable<FileViewerProps["file"]>;
+  markdownMode: "rendered" | "raw";
+}) {
   const kind = fileKind(file.path);
 
   if (file.data.kind === "image") {
@@ -87,9 +93,9 @@ function View({ file }: { file: NonNullable<FileViewerProps["file"]> }) {
     );
   }
 
-  if (kind === "markdown") {
+  if (kind === "markdown" && markdownMode === "rendered") {
     return (
-      <div className="mx-auto max-w-3xl select-text p-6">
+      <div className="markdown-body mx-auto max-w-3xl select-text p-6">
         <Markdown content={file.data.text} />
       </div>
     );
@@ -100,6 +106,7 @@ function View({ file }: { file: NonNullable<FileViewerProps["file"]> }) {
 
 export function FileViewer({ file, loading, error, workspaceName }: FileViewerProps) {
   const [showSkeleton, setShowSkeleton] = useState(false);
+  const [markdownMode, setMarkdownMode] = useState<"rendered" | "raw">("rendered");
 
   useEffect(() => {
     if (!loading) {
@@ -109,6 +116,10 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
     const timer = setTimeout(() => setShowSkeleton(true), 120);
     return () => clearTimeout(timer);
   }, [loading]);
+
+  useEffect(() => {
+    setMarkdownMode("rendered");
+  }, [file?.path]);
 
   if (error) {
     return (
@@ -145,14 +156,31 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
 
   const language = languageFor(file.path);
   const kind = fileKind(file.path);
+  const isMarkdown = kind === "markdown";
+
   const label =
-    kind === "markdown"
-      ? "Markdown"
+    isMarkdown
+      ? markdownMode === "rendered"
+        ? "Markdown: Rendered"
+        : "Markdown: Raw"
       : kind === "image"
         ? "Image"
         : language
           ? language
           : "Text";
+
+  const badgeVariant =
+    isMarkdown
+      ? markdownMode === "rendered"
+        ? "success"
+        : "primary"
+      : "neutral";
+
+  const handleBadgeClick = () => {
+    if (isMarkdown) {
+      setMarkdownMode((prev) => (prev === "rendered" ? "raw" : "rendered"));
+    }
+  };
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -164,10 +192,20 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
             .map((label) => ({ label }))}
         />
         <span className="flex-1" />
-        <Badge variant="neutral">{label}</Badge>
+        <Badge
+          variant={badgeVariant}
+          className={
+            isMarkdown
+              ? "cursor-pointer hover:opacity-90 active:scale-95 transition-all select-none"
+              : ""
+          }
+          onClick={handleBadgeClick}
+        >
+          {label}
+        </Badge>
       </div>
       <ScrollArea className="min-h-0 flex-1">
-        <View file={file} />
+        <View file={file} markdownMode={markdownMode} />
       </ScrollArea>
     </div>
   );

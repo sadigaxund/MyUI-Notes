@@ -52,3 +52,18 @@ body {
 .codeview-clean div[aria-hidden="true"] {
   line-height: 1.5;
 }
+
+/* In the markdown preview page, hide the code block header (showing language 
+ * and copy button) by default and transition it into view on hover. */
+.markdown-body .group.rounded-ui > div:first-child {
+  opacity: 0;
+  height: 0;
+  border-bottom-width: 0;
+  overflow: hidden;
+  transition: all var(--duration-normal) ease;
+}
+.markdown-body .group.rounded-ui:hover > div:first-child {
+  opacity: 1;
+  height: 2.25rem;
+  border-bottom-width: 1px;
+}
