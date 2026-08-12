@@ -53,16 +53,17 @@ body {
   line-height: 1.5;
 }
 
-/* In the markdown preview page, make the code block header absolute so it floats 
- * on hover without moving the content layout. */
+/* In the markdown preview page, make the code block header absolute and float in the 
+ * top-right corner on hover without creating a dedicated row. */
 .markdown-body .group.rounded-ui > div:first-child {
   position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
+  top: 0.5rem;
+  right: 0.5rem;
   z-index: 10;
   border-bottom: none;
   background: transparent;
+  height: auto;
+  padding: 0;
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--duration-normal) ease;
@@ -72,8 +73,7 @@ body {
   pointer-events: auto;
 }
 
-/* Ensure the code text and line numbers are not covered by the floating header. */
-.markdown-body .group.rounded-ui pre,
-.markdown-body .group.rounded-ui div[aria-hidden="true"] {
-  padding-top: 2.25rem;
+/* Hide the language label/header text inside markdown codeblocks so only the copy button floats. */
+.markdown-body .group.rounded-ui > div:first-child > div:first-child {
+  display: none;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { Alert, Badge, Breadcrumbs, CodeBlock, EmptyState, Markdown, ScrollArea, Skeleton } from "my-you-eye";
 import type { FileContent } from "../workspace/types";
@@ -61,12 +61,209 @@ function CodeBody({ path, name, text }: { path: string; name: string; text: stri
   );
 }
 
+interface MarkdownBlock {
+  id: string;
+  type: "code" | "table" | "list" | "blockquote" | "paragraph" | "empty";
+  startLine: number;
+  endLine: number;
+}
+
+function parseBlocks(lines: string[]): MarkdownBlock[] {
+  const blocks: MarkdownBlock[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (trimmed === "") {
+      const start = i;
+      while (i < lines.length && lines[i].trim() === "") {
+        i++;
+      }
+      blocks.push({
+        id: `empty-${start}`,
+        type: "empty",
+        startLine: start,
+        endLine: i - 1,
+      });
+      continue;
+    }
+
+    if (trimmed.startsWith("```")) {
+      const start = i;
+      i++;
+      while (i < lines.length && !lines[i].trim().startsWith("```")) {
+        i++;
+      }
+      if (i < lines.length) {
+        i++;
+      }
+      blocks.push({
+        id: `code-${start}`,
+        type: "code",
+        startLine: start,
+        endLine: i - 1,
+      });
+      continue;
+    }
+
+    if (trimmed.startsWith(">")) {
+      const start = i;
+      while (i < lines.length && lines[i].trim().startsWith(">")) {
+        i++;
+      }
+      blocks.push({
+        id: `quote-${start}`,
+        type: "blockquote",
+        startLine: start,
+        endLine: i - 1,
+      });
+      continue;
+    }
+
+    if (trimmed.startsWith("|")) {
+      const start = i;
+      while (i < lines.length && lines[i].trim().startsWith("|")) {
+        i++;
+      }
+      blocks.push({
+        id: `table-${start}`,
+        type: "table",
+        startLine: start,
+        endLine: i - 1,
+      });
+      continue;
+    }
+
+    const isListLine = (l: string) => {
+      const t = l.trim();
+      return t.startsWith("- ") || t.startsWith("* ") || t.startsWith("+ ") || /^\d+\.\s/.test(t);
+    };
+
+    if (isListLine(line)) {
+      const start = i;
+      while (i < lines.length && (isListLine(lines[i]) || (lines[i].trim() !== "" && lines[i].startsWith("  ")))) {
+        i++;
+      }
+      blocks.push({
+        id: `list-${start}`,
+        type: "list",
+        startLine: start,
+        endLine: i - 1,
+      });
+      continue;
+    }
+
+    const start = i;
+    while (
+      i < lines.length &&
+      lines[i].trim() !== "" &&
+      !lines[i].trim().startsWith("```") &&
+      !lines[i].trim().startsWith(">") &&
+      !lines[i].trim().startsWith("|") &&
+      !isListLine(lines[i])
+    ) {
+      i++;
+    }
+    blocks.push({
+      id: `para-${start}`,
+      type: "paragraph",
+      startLine: start,
+      endLine: i - 1,
+    });
+  }
+  return blocks;
+}
+
+function LiveMarkdownEditor({
+  text,
+  onChange,
+}: {
+  text: string;
+  onChange: (val: string) => void;
+}) {
+  const lines = useMemo(() => text.split("\n"), [text]);
+  const blocks = useMemo(() => parseBlocks(lines), [lines]);
+  const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
+
+  return (
+    <div
+      className="space-y-2 pb-32 min-h-[400px] cursor-text"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && blocks.length > 0) {
+          const lastBlock = blocks[blocks.length - 1];
+          setActiveBlockId(lastBlock.id);
+        }
+      }}
+    >
+      {blocks.map((block) => {
+        const isActive = activeBlockId === block.id;
+        const blockText = lines.slice(block.startLine, block.endLine + 1).join("\n");
+
+        if (isActive) {
+          return (
+            <div key={block.id} className="my-2">
+              <textarea
+                defaultValue={blockText}
+                autoFocus
+                ref={(el) => {
+                  if (el) {
+                    el.style.height = "auto";
+                    el.style.height = `${el.scrollHeight}px`;
+                  }
+                }}
+                onInput={(e) => {
+                  const el = e.currentTarget;
+                  el.style.height = "auto";
+                  el.style.height = `${el.scrollHeight}px`;
+                }}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  const newLines = val.split("\n");
+                  const updated = [
+                    ...lines.slice(0, block.startLine),
+                    ...newLines,
+                    ...lines.slice(block.endLine + 1),
+                  ];
+                  onChange(updated.join("\n"));
+                }}
+                onBlur={() => {
+                  setActiveBlockId(null);
+                }}
+                className="w-full font-mono text-sm bg-transparent border-none outline-none resize-none overflow-hidden p-0 focus:ring-0"
+              />
+            </div>
+          );
+        }
+
+        return (
+          <div
+            key={block.id}
+            onClick={() => setActiveBlockId(block.id)}
+            className="cursor-text my-2"
+          >
+            {block.type === "empty" ? (
+              <div className="h-4 select-none" />
+            ) : (
+              <Markdown content={blockText} />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function View({
   file,
   viewMode,
+  markdownText,
+  setMarkdownText,
 }: {
   file: NonNullable<FileViewerProps["file"]>;
   viewMode: "read" | "edit";
+  markdownText: string;
+  setMarkdownText: (val: string) => void;
 }) {
   const kind = fileKind(file.path);
 
@@ -97,24 +294,25 @@ function View({
     if (viewMode === "read") {
       return (
         <div className="markdown-body mx-auto max-w-3xl select-text p-6">
-          <Markdown content={file.data.text} />
+          <Markdown content={markdownText} />
         </div>
       );
     } else {
       return (
         <div className="mx-auto max-w-3xl p-6">
-          <CodeBody path={file.path} name={file.name} text={file.data.text} />
+          <LiveMarkdownEditor text={markdownText} onChange={setMarkdownText} />
         </div>
       );
     }
   }
 
-  return <CodeBody path={file.path} name={file.name} text={file.data.text} />;
+  return <CodeBody path={file.path} name={file.name} text={file.data.kind === "text" ? file.data.text : ""} />;
 }
 
 export function FileViewer({ file, loading, error, workspaceName }: FileViewerProps) {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [viewMode, setViewMode] = useState<"read" | "edit">("read");
+  const [markdownText, setMarkdownText] = useState("");
 
   useEffect(() => {
     if (!loading) {
@@ -125,9 +323,12 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
     return () => clearTimeout(timer);
   }, [loading]);
 
+  const initialText = file?.data.kind === "text" ? file.data.text : "";
+
   useEffect(() => {
     setViewMode("read");
-  }, [file?.path]);
+    setMarkdownText(initialText);
+  }, [file?.path, initialText]);
 
   if (error) {
     return (
@@ -213,7 +414,12 @@ export function FileViewer({ file, loading, error, workspaceName }: FileViewerPr
         </Badge>
       </div>
       <ScrollArea className="min-h-0 flex-1">
-        <View file={file} viewMode={viewMode} />
+        <View
+          file={file}
+          viewMode={viewMode}
+          markdownText={markdownText}
+          setMarkdownText={setMarkdownText}
+        />
       </ScrollArea>
     </div>
   );
