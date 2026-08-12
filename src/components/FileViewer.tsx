@@ -185,6 +185,7 @@ function LiveMarkdownEditor({
   const lines = useMemo(() => text.split("\n"), [text]);
   const blocks = useMemo(() => parseBlocks(lines), [lines]);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
+  const [focusPosition, setFocusPosition] = useState<{ blockId: string; cursor: "start" | "end" | number } | null>(null);
 
   return (
     <div
@@ -210,6 +211,17 @@ function LiveMarkdownEditor({
                   if (el) {
                     el.style.height = "auto";
                     el.style.height = `${el.scrollHeight}px`;
+                    if (focusPosition && focusPosition.blockId === block.id) {
+                      if (focusPosition.cursor === "start") {
+                        el.setSelectionRange(0, 0);
+                      } else if (focusPosition.cursor === "end") {
+                        const len = el.value.length;
+                        el.setSelectionRange(len, len);
+                      } else if (typeof focusPosition.cursor === "number") {
+                        el.setSelectionRange(focusPosition.cursor, focusPosition.cursor);
+                      }
+                      setFocusPosition(null);
+                    }
                   }
                 }}
                 onInput={(e) => {
@@ -229,6 +241,72 @@ function LiveMarkdownEditor({
                 }}
                 onBlur={() => {
                   setActiveBlockId(null);
+                }}
+                onKeyDown={(e) => {
+                  const el = e.currentTarget;
+                  const start = el.selectionStart;
+                  const end = el.selectionEnd;
+                  const val = el.value;
+
+                  if (e.key === "ArrowUp" && start === 0 && end === 0) {
+                    e.preventDefault();
+                    const idx = blocks.findIndex((b) => b.id === block.id);
+                    if (idx > 0) {
+                      const prevBlock = blocks[idx - 1];
+                      setActiveBlockId(prevBlock.id);
+                      setFocusPosition({ blockId: prevBlock.id, cursor: "end" });
+                    }
+                  } else if (e.key === "ArrowDown" && start === val.length && end === val.length) {
+                    e.preventDefault();
+                    const idx = blocks.findIndex((b) => b.id === block.id);
+                    if (idx < blocks.length - 1) {
+                      const nextBlock = blocks[idx + 1];
+                      setActiveBlockId(nextBlock.id);
+                      setFocusPosition({ blockId: nextBlock.id, cursor: "start" });
+                    }
+                  } else if (e.key === "Backspace" && start === 0 && end === 0) {
+                    e.preventDefault();
+                    const idx = blocks.findIndex((b) => b.id === block.id);
+                    if (idx > 0) {
+                      const prevBlock = blocks[idx - 1];
+                      const prevText = lines.slice(prevBlock.startLine, prevBlock.endLine + 1).join("\n");
+                      const mergedText = prevText + (prevText.endsWith("\n") || val.startsWith("\n") ? "" : "\n") + val;
+
+                      const updated = [
+                        ...lines.slice(0, prevBlock.startLine),
+                        ...mergedText.split("\n"),
+                        ...lines.slice(block.endLine + 1),
+                      ];
+                      onChange(updated.join("\n"));
+                      setActiveBlockId(prevBlock.id);
+                      setFocusPosition({ blockId: prevBlock.id, cursor: prevText.length });
+                    }
+                  } else if (e.key === "Enter" && !e.shiftKey && block.type !== "code") {
+                    e.preventDefault();
+                    const leftText = val.slice(0, start);
+                    const rightText = val.slice(start);
+
+                    const leftLines = leftText.split("\n");
+                    const rightLines = rightText.split("\n");
+
+                    const updated = [
+                      ...lines.slice(0, block.startLine),
+                      ...leftLines,
+                      ...rightLines,
+                      ...lines.slice(block.endLine + 1),
+                    ];
+                    onChange(updated.join("\n"));
+
+                    setTimeout(() => {
+                      const newBlocks = parseBlocks(updated);
+                      const idx = blocks.findIndex((b) => b.id === block.id);
+                      const nextBlock = newBlocks[idx + 1];
+                      if (nextBlock) {
+                        setActiveBlockId(nextBlock.id);
+                        setFocusPosition({ blockId: nextBlock.id, cursor: "start" });
+                      }
+                    }, 0);
+                  }
                 }}
                 className="w-full font-mono text-sm bg-transparent border-none outline-none resize-none overflow-hidden p-0 focus:ring-0"
               />

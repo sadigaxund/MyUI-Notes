@@ -24,8 +24,9 @@ body {
 /* Remove preset min-width and large padding from the line numbering gutter
  * to make the width of the line numbers dynamic. Set pointer-events to none
  * so it cannot be interacted with or selected. */
-.codeview-clean div[aria-hidden="true"] {
-  min-width: auto;
+.codeview-clean div[aria-hidden="true"],
+.markdown-body .group.rounded-ui div[aria-hidden="true"] {
+  min-width: auto !important;
   text-align: right;
   pointer-events: none;
   user-select: none;
@@ -33,24 +34,29 @@ body {
 /* If the gutter is present, add an unhighlightable left margin to pre to prevent
  * the selection highlight from touching/selecting the separator line, and strip
  * the padding-left from line divs to keep them flush. */
-.codeview-clean div[aria-hidden="true"] + pre {
-  margin-left: 0.75rem;
+.codeview-clean div[aria-hidden="true"] + pre,
+.markdown-body .group.rounded-ui div[aria-hidden="true"] + pre {
+  margin-left: 0.75rem !important;
 }
-.codeview-clean div[aria-hidden="true"] + pre code > div {
-  padding-left: 0;
+.codeview-clean div[aria-hidden="true"] + pre code > div,
+.markdown-body .group.rounded-ui div[aria-hidden="true"] + pre code > div {
+  padding-left: 0 !important;
 }
 /* Disable the browser's default focus ring outline on the contentEditable pre element
  * so clicking inside the editor doesn't highlight its boundary box. */
-.codeview-clean pre {
-  outline: none;
+.codeview-clean pre,
+.markdown-body .group.rounded-ui pre {
+  outline: none !important;
 }
 /* Integer line-height (18px at text-xs) so selection highlights between
  * adjacent rows stay contiguous; 1.625 * 12px = 19.5px leaves subpixel
  * gaps when dragging a selection across lines. Applies to the gutter and
  * the code body alike so rows stay aligned. */
 .codeview-clean pre,
-.codeview-clean div[aria-hidden="true"] {
-  line-height: 1.5;
+.codeview-clean div[aria-hidden="true"],
+.markdown-body .group.rounded-ui pre,
+.markdown-body .group.rounded-ui div[aria-hidden="true"] {
+  line-height: 1.5 !important;
 }
 
 /* In the markdown preview page, make the code block header absolute and float in the 
