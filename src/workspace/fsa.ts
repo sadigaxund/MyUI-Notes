@@ -23,13 +23,23 @@ function extensionOf(path: string): string {
 
 /**
  * Opens a workspace via the browser File System Access API. Returns null when
- * the API is unavailable (Firefox/Safari) or the user cancels the picker.
+ * the user cancels the picker. Throws when the API is unavailable — either the
+ * browser lacks it or the page is not in a secure context (the API only works
+ * over HTTPS or http://localhost).
  */
 export async function openFSAWorkspace(): Promise<Workspace | null> {
-  if (!("showDirectoryPicker" in window)) {
-    return null;
+  const pick = window.showDirectoryPicker;
+  if (!pick) {
+    if (window.isSecureContext) {
+      throw new Error(
+        "This browser does not support the File System Access API — use Chrome or Edge."
+      );
+    }
+    throw new Error(
+      "The File System Access API requires a secure context. Open the app via http://localhost or an HTTPS URL (a bare host IP over http will not work)."
+    );
   }
-  const handle = await window.showDirectoryPicker();
+  const handle = await pick();
   return new FSAWorkspace(handle);
 }
 

@@ -62,7 +62,6 @@ export default function App() {
     try {
       const workspace = await openFSAWorkspace();
       if (!workspace) {
-        setPanelError("This browser does not support the File System Access API.");
         return;
       }
       workspaceRef.current = workspace;

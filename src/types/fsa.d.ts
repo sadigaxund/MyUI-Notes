@@ -20,8 +20,8 @@ interface FileSystemDirectoryHandle extends FileSystemHandle {
 }
 
 interface Window {
-  showDirectoryPicker(options?: {
+  showDirectoryPicker?: (options?: {
     id?: string;
     mode?: "read" | "readwrite";
-  }): Promise<FileSystemDirectoryHandle>;
+  }) => Promise<FileSystemDirectoryHandle>;
 }
