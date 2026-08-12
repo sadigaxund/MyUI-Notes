@@ -50,15 +50,23 @@ import "my-you-eye/styles.css";
 
 ## Architecture rules
 
-- All file access goes through the `Workspace` interface in `src/workspace/`
-  (currently implemented by the browser File System Access API). Components
-  must never touch the File System API directly — this keeps the door open for
-  a Node backend implementation later (Docker/container model).
+- All file access goes through the `Workspace` interface in `src/workspace/`.
+  There are two implementations:
+  - `HttpWorkspace` (`http.ts`) — talks to the small Node backend in
+    `server/index.mjs` (`/api/list`, `/api/read`, `/api/file`). Used whenever
+    the app is served by the backend (production/Docker model, `npm run start`,
+    `WORKSPACE_DIR`/`PORT` env vars) or proxied in dev (`/api` → port 3000).
+  - `FSAWorkspace` (`fsa.ts`) — browser File System Access API; only works in
+    Chrome/Edge over HTTPS or localhost, and needs a manual folder pick.
+  The app probes the backend on load and only falls back to the picker when
+  no backend is reachable. Components must never touch fetch/FSA directly —
+  they only see the `Workspace` interface.
 - Keep feature components in `src/components/`, built from `my-you-eye`
   primitives. Do not introduce UI dependencies beyond React + `my-you-eye`.
 
 ## Tooling
 
 - Node is pinned at 24.18.0 (`.node-version`).
-- `npm run dev` — Vite dev server
+- `npm run dev` — Vite dev server (HTTPS, `/api` proxied to the backend)
+- `npm run start` — Node backend + built app on one port (PORT, WORKSPACE_DIR)
 - `npm run build` — `tsc -b && vite build`

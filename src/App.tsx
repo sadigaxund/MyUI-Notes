@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FileTreePanel, FolderIcon, FileIcon } from "./components/FileTreePanel";
 import type { FileTreeNode } from "./components/FileTree";
 import { FileViewer } from "./components/FileViewer";
 import { openFSAWorkspace } from "./workspace/fsa";
+import { probeBackendWorkspace } from "./workspace/http";
 import type { Workspace, WorkspaceEntry } from "./workspace/types";
 import type { FileContent } from "./workspace/types";
 
@@ -52,6 +53,17 @@ export default function App() {
   const workspaceRef = useRef<Workspace | null>(null);
   const workspaceEpoch = useRef(0);
   const loadedDirs = useRef(new Set<string>());
+  const backendProbed = useRef(false);
+
+  const loadWorkspace = async (workspace: Workspace) => {
+    workspaceRef.current = workspace;
+    loadedDirs.current.clear();
+    workspaceEpoch.current += 1;
+    setWorkspaceName(workspace.name);
+    const entries = await workspace.list("");
+    setTree(entriesToNodes(entries));
+    setExpanded(new Set());
+  };
 
   const handleOpenFolder = async () => {
     setLoading(true);
@@ -64,13 +76,7 @@ export default function App() {
       if (!workspace) {
         return;
       }
-      workspaceRef.current = workspace;
-      loadedDirs.current.clear();
-      workspaceEpoch.current += 1;
-      setWorkspaceName(workspace.name);
-      const entries = await workspace.list("");
-      setTree(entriesToNodes(entries));
-      setExpanded(new Set());
+      await loadWorkspace(workspace);
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
         return;
@@ -80,6 +86,21 @@ export default function App() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (backendProbed.current) return;
+    backendProbed.current = true;
+    void (async () => {
+      try {
+        const workspace = await probeBackendWorkspace();
+        if (workspace) {
+          await loadWorkspace(workspace);
+        }
+      } catch {
+        // no backend reachable — fall back to the manual folder picker
+      }
+    })();
+  }, []);
 
   const handleToggle = async (id: string) => {
     if (expanded.has(id)) {

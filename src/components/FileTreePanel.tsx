@@ -56,9 +56,11 @@ export function FileTreePanel({
         <span className="min-w-0 flex-1 truncate px-1 text-sm font-medium">
           {workspaceName ?? "vsnote"}
         </span>
-        <Button variant="secondary" size="sm" onClick={onOpenFolder}>
-          Open folder
-        </Button>
+        {workspaceName === null && (
+          <Button variant="secondary" size="sm" onClick={onOpenFolder}>
+            Open folder
+          </Button>
+        )}
       </Toolbar>
       <ScrollArea className="min-h-0 flex-1 p-1.5">
         {loading ? (
