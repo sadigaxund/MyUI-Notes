@@ -175,28 +175,33 @@ function parseBlocks(lines: string[]): MarkdownBlock[] {
   return blocks;
 }
 
-function getBlockClass(type: string, text: string): string {
+function getBlockWrapper(type: string, text: string): { Tag: any; className?: string } {
   const trimmed = text.trim();
-  const baseClass = "w-full font-mono bg-transparent border-none outline-none resize-none overflow-hidden p-0 focus:ring-0 ";
-
-  if (type === "code") {
-    return baseClass + "text-sm bg-code-bg/30 p-4 rounded-ui my-2";
-  }
-
   if (trimmed.startsWith("# ")) {
-    return baseClass + "text-3xl font-semibold my-2";
+    return { Tag: "h1", className: "m-0 p-0 border-none" };
   }
   if (trimmed.startsWith("## ")) {
-    return baseClass + "text-2xl font-semibold my-2";
+    return { Tag: "h2", className: "m-0 p-0 border-none" };
   }
   if (trimmed.startsWith("### ")) {
-    return baseClass + "text-xl font-semibold my-2";
+    return { Tag: "h3", className: "m-0 p-0 border-none" };
+  }
+  if (trimmed.startsWith("#### ")) {
+    return { Tag: "h4", className: "m-0 p-0 border-none" };
+  }
+  if (trimmed.startsWith("##### ")) {
+    return { Tag: "h5", className: "m-0 p-0 border-none" };
+  }
+  if (trimmed.startsWith("###### ")) {
+    return { Tag: "h6", className: "m-0 p-0 border-none" };
   }
   if (type === "blockquote") {
-    return baseClass + "border-l-4 border-border pl-4 italic text-muted-foreground my-2";
+    return { Tag: "blockquote", className: "m-0 py-0 pl-4 border-l-4 border-border italic text-muted-foreground" };
   }
-
-  return baseClass + "text-base leading-relaxed my-2";
+  if (type === "code") {
+    return { Tag: "pre", className: "p-4 bg-code-bg/30 rounded-ui my-2" };
+  }
+  return { Tag: "p", className: "m-0 p-0" };
 }
 
 function LiveMarkdownEditor({
@@ -226,8 +231,9 @@ function LiveMarkdownEditor({
         const blockText = lines.slice(block.startLine, block.endLine + 1).join("\n");
 
         if (isActive) {
+          const { Tag, className } = getBlockWrapper(block.type, blockText);
           return (
-            <div key={block.id} className="my-2">
+            <Tag key={block.id} className={className}>
               <textarea
                 defaultValue={blockText}
                 autoFocus
@@ -338,9 +344,15 @@ function LiveMarkdownEditor({
                     }, 0);
                   }
                 }}
-                className={getBlockClass(block.type, blockText)}
+                style={{
+                  fontSize: "inherit",
+                  fontWeight: "inherit",
+                  lineHeight: "inherit",
+                  fontFamily: "var(--font-mono)",
+                }}
+                className="w-full bg-transparent border-none outline-none resize-none overflow-hidden p-0 focus:ring-0"
               />
-            </div>
+            </Tag>
           );
         }
 
