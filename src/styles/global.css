@@ -21,17 +21,28 @@ body {
 .codeview-clean > div:first-child {
   display: none;
 }
+/* Remove preset min-width and large padding from the line numbering gutter
+ * to make the width of the line numbers dynamic. Set pointer-events to none
+ * so it cannot be interacted with or selected. */
 .codeview-clean div[aria-hidden="true"] {
-  min-width: 3rem;
-  padding-right: 2.25rem;
+  min-width: auto;
   text-align: right;
-  border-right-color: transparent;
+  pointer-events: none;
+  user-select: none;
 }
-/* The gap between the numbers and the code belongs entirely to the gutter
- * (select-none) so dragging across it never highlights that strip: strip
- * the line divs' left padding (px-panel) here. */
-.codeview-clean pre code > div {
+/* If the gutter is present, add an unhighlightable left margin to pre to prevent
+ * the selection highlight from touching/selecting the separator line, and strip
+ * the padding-left from line divs to keep them flush. */
+.codeview-clean div[aria-hidden="true"] + pre {
+  margin-left: 0.75rem;
+}
+.codeview-clean div[aria-hidden="true"] + pre code > div {
   padding-left: 0;
+}
+/* Disable the browser's default focus ring outline on the contentEditable pre element
+ * so clicking inside the editor doesn't highlight its boundary box. */
+.codeview-clean pre {
+  outline: none;
 }
 /* Integer line-height (18px at text-xs) so selection highlights between
  * adjacent rows stay contiguous; 1.625 * 12px = 19.5px leaves subpixel
