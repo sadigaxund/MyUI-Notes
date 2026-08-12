@@ -1,8 +1,7 @@
 import { useCallback, useMemo, useRef } from "react";
 import type { ReactNode } from "react";
 import { cn } from "my-you-eye";
-import { iconTone } from "../lib/fileType";
-import { FileIcon, FolderIcon } from "./icons";
+import { fileIconPath, folderIconPath } from "../lib/fileIcons";
 
 export interface FileTreeNode {
   /** Workspace-relative path ("" for the workspace root). */
@@ -84,9 +83,13 @@ function Row({ node, depth, expanded, selected, onToggle, onSelect }: RowProps) 
       </span>
       <span className="mr-1.5 flex shrink-0 items-center">
         {isDirectory ? (
-          <FolderIcon open={expanded} />
+          <img
+            src={folderIconPath(node.label, expanded)}
+            alt=""
+            className="size-4 shrink-0"
+          />
         ) : (
-          <FileIcon tone={iconTone(node.id)} />
+          <img src={fileIconPath(node.id)} alt="" className="size-4 shrink-0" />
         )}
       </span>
       <span

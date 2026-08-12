@@ -1,6 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "my-you-eye";
-import { FileIcon } from "./icons";
-import { iconTone } from "../lib/fileType";
+import { fileIconPath } from "../lib/fileIcons";
 
 export interface OpenTab {
   path: string;
@@ -32,7 +31,11 @@ export function TabBar({ tabs, activePath, onActivate, onClose }: TabBarProps) {
         {tabs.map((tab) => (
           <TabsTrigger key={tab.path} value={tab.path} className="group max-w-56">
             <span className="flex min-w-0 items-center gap-1.5">
-              <FileIcon tone={iconTone(tab.path)} />
+              <img
+                src={fileIconPath(tab.path)}
+                alt=""
+                className="size-4 shrink-0"
+              />
               <span className="truncate">{tab.name}</span>
             </span>
             <span
